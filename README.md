@@ -1,4 +1,4 @@
 Для запуска:
 1) Заполнить файл .env по образцу
 2) Запустить контейнеры
-3) Применить скрипт 'avito_fast_api/src/se_webhook_url.py'
+3) Применить скрипт 'avito_fast_api/src/set_webhook_url.py'
