@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+    env_file: .env
+    container_name: avito_fast_api
+    command: ["/avito_fast_api/docker/app.sh"]
+    ports:
+      - 8000:8000
+    volumes:
+      - ./avito_fast_api:/avito_fast_api
+
+  db:
+    image: postgres:15
+    container_name: db_avito
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:
