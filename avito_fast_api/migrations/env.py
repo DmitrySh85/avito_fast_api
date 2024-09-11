@@ -8,7 +8,8 @@ from alembic import context
 sys.path.append(os.path.join(sys.path[0], 'src'))
 from src.db import Base
 from src.settings import settings
-from src.token.models import *
+from src.tokens.models import *
+from src.message.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

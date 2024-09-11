@@ -5,10 +5,12 @@ from typing import Optional, Dict
 class CallSchema(BaseModel):
     status: str
     target_user_id: int
+    tg_message_id: Optional[int] = None
 
 
 class ImageSchema(BaseModel):
     sizes: Dict[str, str]
+    tg_message_id: Optional[int] = None
 
 
 class ItemSchema(BaseModel):
@@ -16,6 +18,7 @@ class ItemSchema(BaseModel):
     item_url: str
     price_string: str
     title: str
+    tg_message_id: Optional[int] = None
 
 
 class LinkPreviewSchema(BaseModel):
@@ -30,6 +33,7 @@ class LinkSchema(BaseModel):
     preview: Optional[LinkPreviewSchema] = None
     text: str
     url: str
+    tg_message_id: Optional[int] = None
 
 
 class LocationSchema(BaseModel):
@@ -38,6 +42,8 @@ class LocationSchema(BaseModel):
     lon: float
     text: Optional[str] = None
     title: Optional[str] = None
+    tg_message_id: Optional[int] = None
+
 
 
 class ContentSchema(BaseModel):
@@ -47,9 +53,20 @@ class ContentSchema(BaseModel):
     link: Optional[LinkSchema] = None
     location: Optional[LocationSchema] = None
     text: Optional[str] = None
+    tg_message_id: Optional[int] = None
 
 
-class ObjectSchema(BaseModel):
+class CreateContentSchema(BaseModel):
+    call_id: Optional[int] = None
+    image_id: Optional[int] = None
+    item_id: Optional[int] = None
+    link_id: Optional[int] = None
+    location_id: Optional[int] = None
+    text: Optional[str] = None
+    tg_message_id: Optional[int] = None
+
+
+class AvitoMessageSchema(BaseModel):
     author_id: int
     chat_id: str
     chat_type: str
@@ -61,5 +78,16 @@ class ObjectSchema(BaseModel):
     type: str
     user_id: int
 
+
+class CreateAvitoMessageSchema(BaseModel):
+    author_id: int
+    content_id: int
+    chat_id: str
+    created: int
+    id: str
+    item_id: int
+    read: int
+    type: str
+    user_id: int
 
 

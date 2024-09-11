@@ -1,7 +1,8 @@
 import requests
-from token.services import get_access_token
+from tokens.services import get_access_token
 from settings import settings
 from logger import logger
+
 
 def set_webhook_url():
     logger.info(f"Setting webhook: {settings.WEBHOOK_URL}")
