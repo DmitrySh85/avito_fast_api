@@ -10,6 +10,7 @@ services:
       - 8000:8000
     volumes:
       - ./avito_fast_api:/avito_fast_api
+    user: "prod"
 
   db:
     image: postgres:15

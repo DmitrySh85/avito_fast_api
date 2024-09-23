@@ -36,3 +36,5 @@ class TelegramNotificator:
                 "longitude": longitude,
             }
         )
+
+
