@@ -14,6 +14,6 @@ RUN pip install -r requirements.txt
 
 USER prod
 
-COPY --chown=prod:prod ./avito_fast_api .
+COPY --chown=prod:prod ./avito_fast_api /avito_fast_api
 
 RUN chmod +x /avito_fast_api/docker/app.sh

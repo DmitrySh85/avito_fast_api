@@ -7,10 +7,9 @@ services:
     container_name: avito_fast_api
     command: ["/avito_fast_api/docker/app.sh"]
     ports:
-      - 8000:8000
+      - 8800:8000
     volumes:
       - ./avito_fast_api:/avito_fast_api
-    user: "prod"
 
   db:
     image: postgres:15
@@ -24,3 +23,4 @@ services:
 
 volumes:
   dbdata:
+  avito_fast_api:
