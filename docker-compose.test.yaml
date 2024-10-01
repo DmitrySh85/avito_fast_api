@@ -3,13 +3,15 @@ services:
   app:
     build:
       context: .
+      dockerfile: Dockerfile.test
     env_file: .env
     container_name: avito_fast_api
+    user: "prod"
     command: ["/avito_fast_api/docker/app.sh"]
     ports:
       - 8800:8000
     volumes:
-      - avito_fast_api:/avito_fast_api
+      - ./avito_fast_api:/avito_fast_api
 
   db:
     image: postgres:15
@@ -23,4 +25,3 @@ services:
 
 volumes:
   dbdata:
-  avito_fast_api:
