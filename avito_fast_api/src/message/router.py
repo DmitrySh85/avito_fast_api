@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Request, Depends
 from logger import logger
+from pydantic_core import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import AvitoMessageSchema
+from .schemas import Object
 import json
 from .services import process_avito_message
 from db import get_async_session
@@ -20,6 +21,10 @@ async def receive_webhook(
 ):
     payload = await request.json()
     logger.info(json.dumps(payload))
-    data = AvitoMessageSchema(**payload)
-    await process_avito_message(data, session)
+    try:
+        data = Object(**payload)
+    except ValidationError as e:
+        logger.debug(e)
+        return {"ok": True}
+    await process_avito_message(data.payload.value, session)
     return {"ok": True}
