@@ -128,7 +128,8 @@ async def insert_avito_message_to_db(
         item_id=data.item_id,
         read=data.read,
         type=data.type,
-        user_id=data.user_id
+        user_id=data.user_id,
+        created_at=data.published_at
     )
     await insert_message_to_db(avito_message, session)
 

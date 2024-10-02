@@ -1,5 +1,9 @@
+import datetime
+from uuid import UUID
+
 from pydantic import BaseModel
 from typing import Optional, Dict
+from datetime import datetime
 
 
 class CallSchema(BaseModel):
@@ -45,7 +49,6 @@ class LocationSchema(BaseModel):
     tg_message_id: Optional[int] = None
 
 
-
 class ContentSchema(BaseModel):
     call: Optional[CallSchema] = None
     image: Optional[ImageSchema] = None
@@ -74,9 +77,22 @@ class AvitoMessageSchema(BaseModel):
     created: int
     id: str
     item_id: int
-    read: int
+    read: Optional[int] = None
     type: str
     user_id: int
+    published_at: Optional[datetime]
+
+
+class ObjectPayload(BaseModel):
+    type: str
+    value: AvitoMessageSchema
+
+
+class Object(BaseModel):
+    id: UUID
+    version: Optional[str]
+    timestamp: int
+    payload: ObjectPayload
 
 
 class CreateAvitoMessageSchema(BaseModel):
@@ -86,8 +102,9 @@ class CreateAvitoMessageSchema(BaseModel):
     created: int
     id: str
     item_id: int
-    read: int
+    read: Optional[int] = None
     type: str
     user_id: int
+    created_at: Optional[datetime] = None
 
 
