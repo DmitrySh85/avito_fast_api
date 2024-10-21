@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy import insert, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .schemas import (
@@ -30,21 +31,58 @@ from static_text.static_text import MESSAGE_RECEIVED, RECEIVED_AVITO_CALL
 from requests.models import Response
 from logger import logger
 from db import get_async_session
+from items.manager import AvitoItemManager
 
 
 async def process_avito_message(
         data: AvitoMessageSchema,
         session: AsyncSession = Depends(get_async_session)
 ):
-    sent_to_tg_data = send_avito_message_to_tg(data)
-    await insert_avito_message_to_db(sent_to_tg_data, session)
+    message_is_incoming = data.author_id != data.user_id
+    if message_is_incoming:
+        logger.info(f"INCOMING MESSAGE {message_is_incoming}")
+        message_in_db = await check_message_in_db(data, session)
+        logger.info(f"DB SAYS: {message_in_db}")
+        if message_in_db:
+            logger.info("Message is already in db")
+            return
+        sent_to_tg_data = await send_avito_message_to_tg(data, session)
+        try:
+            await insert_avito_message_to_db(sent_to_tg_data, session)
+        except IntegrityError as e:
+            logger.debug(e)
 
 
-def send_avito_message_to_tg(data: AvitoMessageSchema) -> AvitoMessageSchema:
+async def check_message_in_db(
+        data: AvitoMessageSchema,
+        session: AsyncSession = Depends(get_async_session)
+):
+    logger.info(data)
+    stmt = select(AvitoMessage.id).where(
+        AvitoMessage.id == data.id,
+    )
+    result = await session.execute(stmt)
+    return result.fetchall()
+
+
+async def send_avito_message_to_tg(
+        data: AvitoMessageSchema,
+        session: AsyncSession = Depends(get_async_session)
+) -> AvitoMessageSchema:
     telegram = TelegramNotificator()
 
     content = data.content
-    telegram.send_message(settings.ADMIN_TG_ID, MESSAGE_RECEIVED)
+
+    item_id = data.item_id
+    logger.info(f"item_id: {item_id}")
+    items_manager = AvitoItemManager(session)
+    item = await items_manager.get_item_from_avito(item_id)
+    department = item.get("address")
+    title = item.get("title")
+
+    telegram.send_message(
+        settings.ADMIN_TG_ID,
+        MESSAGE_RECEIVED.format(department=department, title=title))
 
     if content.text:
         response = telegram.send_message(settings.ADMIN_TG_ID, content.text)
@@ -80,7 +118,7 @@ def send_avito_message_to_tg(data: AvitoMessageSchema) -> AvitoMessageSchema:
             longitude=content.location.lon,
         )
         content.location.tg_message_id = get_telegram_message_id(response)
-
+    logger.info(data)
     return data
 
 
@@ -138,7 +176,6 @@ async def insert_location_to_db(
         location: LocationSchema,
         session: AsyncSession = Depends(get_async_session)
 ):
-
     new_location = Location(
         **location.model_dump()
     )
@@ -149,7 +186,7 @@ async def insert_location_to_db(
 
 
 async def insert_link_to_db(
-        link:  LinkSchema,
+        link: LinkSchema,
         session: AsyncSession = Depends(get_async_session)
 ):
     link_preview_id = await insert_link_preview_to_db(link.preview, session)
@@ -174,6 +211,7 @@ async def insert_link_preview_to_db(
     await session.commit()
     await session.refresh(new_link_preview)
     return new_link_preview.id
+
 
 async def insert_item_to_db(
         item: ItemSchema,

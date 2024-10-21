@@ -52,7 +52,10 @@ async def get_token_from_db(
     current_time = datetime.now()
     stmt = select(AccessToken.token).where(AccessToken.expires_at > current_time)
     result = await session.execute(stmt)
-    return result.fetchone().token
+    try:
+        return result.fetchone().token
+    except AttributeError:
+        return
 
 
 async def refresh_token_in_db(

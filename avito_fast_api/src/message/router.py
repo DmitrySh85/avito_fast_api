@@ -26,5 +26,7 @@ async def receive_webhook(
         await process_avito_message(data.payload.value, session)
     except ValidationError as e:
         logger.debug(e)
+    except Exception as exception:
+        logger.info(exception)
     finally:
         return {"ok": True}
