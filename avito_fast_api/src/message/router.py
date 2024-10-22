@@ -19,12 +19,14 @@ async def receive_webhook(
         request: Request,
         session: AsyncSession = Depends(get_async_session)
 ):
-    payload = await request.json()
-    logger.info(json.dumps(payload))
     try:
+        payload = await request.json()
+        logger.info(json.dumps(payload))
         data = Object(**payload)
+        await process_avito_message(data.payload.value, session)
     except ValidationError as e:
         logger.debug(e)
+    except Exception as exception:
+        logger.info(exception)
+    finally:
         return {"ok": True}
-    await process_avito_message(data.payload.value, session)
-    return {"ok": True}
