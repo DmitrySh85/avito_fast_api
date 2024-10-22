@@ -8,8 +8,6 @@ services:
     command: sh -c "cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
     ports:
       - 8800:8000
-    volumes:
-      - avito_fast_api:/avito_fast_api
 
   db:
     image: postgres:15
@@ -23,4 +21,3 @@ services:
 
 volumes:
   dbdata:
-  avito_fast_api:
