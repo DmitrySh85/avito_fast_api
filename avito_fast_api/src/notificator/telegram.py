@@ -9,7 +9,7 @@ class TelegramNotificator:
     def send_message(self, chat_id, message):
         return requests.post(
             f"https://api.telegram.org/bot{self.bot_token}/sendMessage",
-            data={"chat_id": chat_id, "text": message},
+            data={"chat_id": chat_id, "text": message, "parse_mode": "Markdown"},
         )
 
     def send_picture(
