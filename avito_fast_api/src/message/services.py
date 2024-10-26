@@ -80,18 +80,16 @@ async def send_avito_message_to_tg(
     department = item.get("address")
     title = item.get("title")
 
-    telegram.send_message(
-        settings.ADMIN_TG_ID,
-        MESSAGE_RECEIVED.format(department=department, title=title))
-
     if content.text:
-        response = telegram.send_message(settings.ADMIN_TG_ID, content.text)
+        response = telegram.send_message(settings.ADMIN_TG_ID, MESSAGE_RECEIVED.format(department=department, title=title, message_text=content.text))
         content.tg_message_id = get_telegram_message_id(response)
 
     if content.call:
         text = RECEIVED_AVITO_CALL.format(
             target_user_id=content.call.target_user_id,
-            status=content.call.status
+            status=content.call.status,
+            title=title,
+            department=department
         )
         response = telegram.send_message(settings.ADMIN_TG_ID, text)
         content.call.tg_message_id = get_telegram_message_id(response)
@@ -108,10 +106,11 @@ async def send_avito_message_to_tg(
 
     if content.link:
         text = f"{content.link.text} {content.link.url}"
-        response = telegram.send_message(settings.ADMIN_TG_ID, text)
+        response = telegram.send_message(settings.ADMIN_TG_ID, MESSAGE_RECEIVED.format(department=department, title=title, message_text=text))
         content.link.tg_message_id = get_telegram_message_id(response)
 
     if content.location:
+        telegram.send_message(settings.ADMIN_TG_ID, MESSAGE_RECEIVED.format(department=department, title=title, message_text=""))
         response = telegram.send_location(
             settings.ADMIN_TG_ID,
             latitude=content.location.lat,
