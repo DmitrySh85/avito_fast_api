@@ -1,3 +1,4 @@
+import json
 import os
 from dotenv import load_dotenv
 from pydantic.v1 import BaseSettings
@@ -8,6 +9,7 @@ class Settings(BaseSettings):
     CLIENT_ID: str = os.getenv("CLIENT_ID")
     CLIENT_SECRET: str = os.getenv("CLIENT_SECRET")
     WEBHOOK_URL: str = os.getenv("WEBHOOK_URL")
+    AVITO_USER_ID: int = os.getenv("AVITO_USER_ID")
 
     DB_HOST: str = os.environ.get("DB_HOST")
     DB_PORT: str = os.environ.get("DB_PORT")
@@ -17,7 +19,8 @@ class Settings(BaseSettings):
     db_url: str = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
-    ADMIN_TG_ID = os.environ.get("ADMIN_TG_ID")
+
+    DEPARTMENTS_GROUPS_IDS: dict = json.loads(os.environ.get("DEPARTMENTS_GROUPS_IDS", {}))
 
 
 settings = Settings()
