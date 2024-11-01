@@ -20,7 +20,7 @@ async def insert_departments_to_db():
             "telegram_group_id": settings.DEPARTMENTS_GROUPS_IDS.get("Федосеенко")
         },
         {
-            "address": "Нижегородская обл., Нижний Новгород, Полтавская ул., 30Н",
+            "address": "Нижегородская обл., Нижний Новгород, Полтавская ул., 30к2",
             "name": "Полтавская",
             "telegram_group_id": settings.DEPARTMENTS_GROUPS_IDS.get("Полтавская")
         },
