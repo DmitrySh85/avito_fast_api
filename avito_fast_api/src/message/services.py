@@ -22,6 +22,7 @@ from logger import logger
 from db import get_async_session
 from items.manager import AvitoItemManager
 from departments.services import get_department_chat_id, get_department_group_id
+from settings import settings
 
 
 async def process_avito_message(
@@ -68,6 +69,11 @@ async def send_avito_message_to_tg(
     item = await items_manager.get_item_from_avito(item_id)
     department = item.get("address")
     department_group_id = await get_department_group_id(department, session)
+    logger.debug(f"Fetched department_group_id from DB: {department_group_id}")
+    if department_group_id is None:
+        department_group_id = settings.ADMIN_TG_ID
+        logger.debug(f"Get group chat from .env: {department_group_id}")
+
     title = item.get("title")
 
     if content.text:

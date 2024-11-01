@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     WEBHOOK_URL: str = os.getenv("WEBHOOK_URL")
     AVITO_USER_ID: int = os.getenv("AVITO_USER_ID")
 
+    ADMIN_TG_ID: int = os.getenv("ADMIN_TG_ID")
+
     DB_HOST: str = os.environ.get("DB_HOST")
     DB_PORT: str = os.environ.get("DB_PORT")
     DB_NAME: str = os.environ.get("DB_NAME")
