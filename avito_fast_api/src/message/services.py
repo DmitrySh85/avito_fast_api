@@ -30,7 +30,7 @@ async def process_avito_message(
         session: AsyncSession = Depends(get_async_session)
 ):
     message_is_incoming = data.author_id != data.user_id
-    if message_is_incoming:
+    if message_is_incoming and data.type != "system":
         logger.info(f"INCOMING MESSAGE {message_is_incoming}")
         message_in_db = await check_message_in_db(data, session)
         logger.info(f"DB SAYS: {message_in_db}")
