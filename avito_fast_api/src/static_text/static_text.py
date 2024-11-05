@@ -1,2 +1,1 @@
-MESSAGE_RECEIVED = "Получено сообщение из Авито по объявлению {title} филиала {department}.\n```{message_text}```"
 RECEIVED_AVITO_CALL = "Звонок от {target_user_id}. Статус: {status}. Объявление {title} филиала {department}"

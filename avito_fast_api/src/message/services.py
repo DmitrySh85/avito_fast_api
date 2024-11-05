@@ -16,7 +16,7 @@ from .models import (
     AvitoMessage
 )
 from notificator.telegram import TelegramNotificator
-from static_text.static_text import MESSAGE_RECEIVED, RECEIVED_AVITO_CALL
+from static_text.static_text import RECEIVED_AVITO_CALL
 from requests.models import Response
 from logger import logger
 from db import get_async_session
@@ -84,7 +84,7 @@ async def send_avito_message_to_tg(
         data.telegram_topic = message_thread_id
         response = telegram.send_message_to_topic(
             chat_id=department_group_id, 
-            text=MESSAGE_RECEIVED.format(department=department, title=title, message_text=content.text),
+            text=content.text,
             message_thread_id=message_thread_id
             )
         logger.info(response.json())
