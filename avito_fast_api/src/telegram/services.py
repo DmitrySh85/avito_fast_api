@@ -28,8 +28,7 @@ async def send_message_to_avito(
         text=data.text
     )
     response = send_api_message_to_avito(avito_message)
-    logger.info(response)
-
+    logger.info(response.json())
 
 
 def send_api_message_to_avito(

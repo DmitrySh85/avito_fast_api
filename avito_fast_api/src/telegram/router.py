@@ -17,5 +17,6 @@ async def process_telegram_message(
         data: TelegramEventSchema,
         session: AsyncSession = Depends(get_async_session)
 ):
+
     await send_message_to_avito(data, session)
     return {"ok": True}
