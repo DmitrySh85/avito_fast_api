@@ -49,7 +49,7 @@ def send_api_message_to_avito(
           "type": "text"
 }
     logger.info(SendMessageToAvitoSchema)
-    response = requests.post(url=url, headers=headers, data=data)
+    response = requests.post(url=url, headers=headers, json=data)
     return response
 
 
