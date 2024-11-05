@@ -40,7 +40,7 @@ async def send_message_to_avito(
 def send_api_message_to_avito(
         message: SendMessageToAvitoSchema
 ) -> Response:
-    url = f"https://api.avito.ru/messenger/v1/accounts/{message.user_id}/chats/{message.chat_id}/messages"
+    url = f"https://api.avito.ru/messenger/v1/accounts/{message.user_id}/chats/{message.chat_id}/messages/"
     headers = {"Authorization": f"Bearer {message.token}"}
     data = {
           "message": {
