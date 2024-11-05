@@ -1,5 +1,5 @@
 from fastapi import Depends
-from requests import Response
+from requests import Response, JSONDecodeError
 from sqlalchemy import select
 from tokens.services import get_token
 import requests
@@ -31,7 +31,10 @@ async def send_message_to_avito(
         text=data.text
     )
     response = send_api_message_to_avito(avito_message)
-    logger.info(response.json())
+    try:
+        logger.info(response.json())
+    except JSONDecodeError:
+        logger.info(response.text)
 
 
 def send_api_message_to_avito(
