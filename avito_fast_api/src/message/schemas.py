@@ -28,6 +28,7 @@ class AvitoMessageSchema(BaseModel):
     author_id: int
     chat_id: str
     chat_type: str
+    department_id: Optional[int] = None
     telegram_topic: Optional[int] = None
     content: ContentSchema
     created: int
@@ -37,6 +38,7 @@ class AvitoMessageSchema(BaseModel):
     type: str
     user_id: int
     published_at: Optional[datetime]
+
 
 
 class ObjectPayload(BaseModel):

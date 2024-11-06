@@ -5,7 +5,7 @@ services:
       context: .
     env_file: .env
     container_name: avito_fast_api
-    command: sh -c "cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
+    command: sh -c "alembic upgrade head && cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
     ports:
       - 8800:8000
 

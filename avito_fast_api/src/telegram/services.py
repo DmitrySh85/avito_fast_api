@@ -31,10 +31,8 @@ async def send_message_to_avito(
         text=data.text
     )
     response = send_api_message_to_avito(avito_message)
-    try:
-        logger.info(response.json())
-    except JSONDecodeError:
-        logger.info(response.text)
+    if response.status_code == 200:
+        logger.info("Message has been sent to avito")
 
 
 def send_api_message_to_avito(
