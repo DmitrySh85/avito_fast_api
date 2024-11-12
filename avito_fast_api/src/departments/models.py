@@ -8,3 +8,4 @@ class Department(Base):
     name = Column(String())
     address = Column(String())
     telegram_group_id = Column(BigInteger())
+
