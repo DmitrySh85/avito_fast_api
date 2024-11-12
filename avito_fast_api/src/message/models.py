@@ -1,7 +1,6 @@
 from db import Base
 from sqlalchemy import Column, Integer, String, JSON, Text, ForeignKey, Float, BigInteger, DateTime
 from sqlalchemy.orm import relationship
-from departments.models import Department
 
 
 class Call(Base):
@@ -30,7 +29,7 @@ class Chat(Base):
     telegram_topic = Column(BigInteger())
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
 
-    department = relationship(Department, backref="chats")
+    department = relationship("Department", backref="chats")
 
 
 class AvitoMessage(Base):
