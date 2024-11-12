@@ -21,7 +21,10 @@ from requests.models import Response
 from logger import logger
 from db import get_async_session
 from items.manager import AvitoItemManager
-from departments.services import get_department_chat_id, get_department_group_id
+from departments.services import (
+    get_department_group_id,
+    get_department_id
+)
 from settings import settings
 
 
@@ -69,7 +72,10 @@ async def send_avito_message_to_tg(
     item = await items_manager.get_item_from_avito(item_id)
     department = item.get("address")
     department_group_id = await get_department_group_id(department, session)
+    department_id = await get_department_id(department, session)
+    data.department_id = department_id
     logger.debug(f"Fetched department_group_id from DB: {department_group_id}")
+
     if department_group_id is None:
         department_group_id = settings.ADMIN_TG_ID
         logger.debug(f"Get group chat from .env: {department_group_id}")
@@ -81,10 +87,13 @@ async def send_avito_message_to_tg(
         if not message_thread_id:
             topic = telegram.create_topic(department_group_id, data.chat_id)
             message_thread_id = topic.get("result", {}).get('message_thread_id')
+            text = f"Сообщение по объявлению: \n<b>{title}</b>\n{content.text}"
+        else:
+            text = content.text
         data.telegram_topic = message_thread_id
         response = telegram.send_message_to_topic(
             chat_id=department_group_id, 
-            text=content.text,
+            text=text,
             message_thread_id=message_thread_id
             )
         logger.info(response.json())
@@ -108,6 +117,7 @@ async def send_avito_message_to_tg(
         )
         logger.info(response.json())
         content.tg_message_id = get_telegram_message_id(response)
+
     return data
 
 
@@ -174,7 +184,13 @@ async def insert_chat_to_db(
         data: AvitoMessageSchema,
         session: AsyncSession = Depends(get_async_session)
 ) -> str:
-    await session.merge(Chat(id=data.chat_id, chat_type=data.chat_type, telegram_topic=data.telegram_topic))
+    await session.merge(
+        Chat(
+            id=data.chat_id,
+            chat_type=data.chat_type,
+            telegram_topic=data.telegram_topic,
+            department_id=data.department_id
+        ))
     await session.commit()
     return data.chat_id
 

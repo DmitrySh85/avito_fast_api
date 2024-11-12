@@ -21,3 +21,12 @@ async def get_department_group_id(
     stmt = select(Department.telegram_group_id).where(Department.address == address)
     result = await session.execute(stmt)
     return result.scalar()
+
+
+async def get_department_id(
+    address: str,
+    session: AsyncSession = Depends(get_async_session)
+):
+    stmt = select(Department.id).where(Department.address == address)
+    result = await session.execute(stmt)
+    return result.scalar()

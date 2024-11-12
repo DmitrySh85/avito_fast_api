@@ -48,5 +48,9 @@ class TelegramNotificator:
     ):
         return requests.post(
             f"https://api.telegram.org/bot{self.bot_token}/sendMessage",
-            data={"chat_id": chat_id, "text": text.replace("\n", ""), "message_thread_id": message_thread_id, "parse_mode": "Markdown"},
+            data={
+                "chat_id": chat_id,
+                "text": text,
+                "message_thread_id": message_thread_id,
+                "parse_mode": "HTML"},
         )
