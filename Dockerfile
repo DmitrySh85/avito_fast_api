@@ -3,8 +3,6 @@ FROM python:3.11-alpine
 ARG UID=1000
 ARG GID=1000
 
-RUN apk add --no-cache gcc musl-dev python3-dev libffi-dev postgresql-dev
-
 RUN addgroup -g ${GID} prod && \
     adduser -u ${UID} -G prod -s /bin/sh -D prod
 
