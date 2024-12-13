@@ -3,6 +3,9 @@ services:
   app:
     build:
       context: .
+      args:
+        - UID=${DOCKER_UID:-1000}
+        - GID=${DOCKER_GID:-1000}
     env_file: .env
     container_name: avito_fast_api
     command: sh -c "alembic upgrade head && cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
