@@ -1,19 +1,19 @@
-FROM python:3.11
+FROM python:3.11-alpine
 
-RUN pip install --upgrade pip
+ARG UID=1000
+ARG GID=1000
 
-RUN useradd -rms /bin/bash prod && chmod 777 /opt /run
+RUN apk add --no-cache gcc musl-dev python3-dev libffi-dev postgresql-dev
+
+RUN addgroup -g ${GID} prod && \
+    adduser -u ${UID} -G prod -s /bin/sh -D prod
 
 WORKDIR /avito_fast_api
 
-RUN chown -R prod:prod /avito_fast_api && chmod 755 /avito_fast_api
+RUN chown -R ${GID}:${UID} /avito_fast_api && chmod 755 /avito_fast_api
 
 COPY ./avito_fast_api/requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-USER prod
-
-COPY --chown=prod:prod ./avito_fast_api .
-
-RUN chmod +x /avito_fast_api/docker/app.sh
+COPY --chown={GID}:{UID} ./avito_fast_api .
