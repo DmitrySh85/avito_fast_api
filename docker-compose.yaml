@@ -13,7 +13,7 @@ services:
       - 8811:8000
 
   db:
-    image: postgres:16
+    image: postgres:15
     container_name: db_avito_test
     environment:
       POSTGRES_DB: "postgres"
