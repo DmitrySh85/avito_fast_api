@@ -20,13 +20,18 @@ async def set_webhook_url():
         logger.info(f"Setting webhook: {settings.WEBHOOK_URL}/{department_id}/")
         url = "https://api.avito.ru/messenger/v3/webhook"
         access_token = await get_access_token(department_id)
-        print(department.name, access_token)
+
         headers = {"Authorization": f"Bearer {access_token}"}
         data = {
             "url": f"{settings.WEBHOOK_URL}/{department_id}/"
         }
+        print(department.id, department.name, access_token, data)
         response = requests.post(url, headers=headers, data=data)
-        logger.info(response.json())
+        print(response)
+        if response.status_code == 200:
+            logger.info(response.json())
+        else:
+            logger.info(response.content)
 
 
 async def get_departments() -> List[Department]:
