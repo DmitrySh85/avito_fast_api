@@ -26,7 +26,7 @@ async def set_webhook_url():
             "url": f"{settings.WEBHOOK_URL}{department_id}/"
         }
         print(department.id, department.name, access_token, data)
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=headers, json=data)
         print(response)
         if response.status_code == 200:
             logger.info(response.json())
