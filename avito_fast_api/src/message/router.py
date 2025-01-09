@@ -7,6 +7,7 @@ from .schemas import Object
 import json
 from .services import process_avito_message
 from db import get_async_session
+from settings import settings
 
 
 router = APIRouter(
@@ -14,6 +15,7 @@ router = APIRouter(
     tags=["avito"]
 )
 
+"""
 @router.post("/")
 async def receive_webhook(
         request: Request,
@@ -29,4 +31,16 @@ async def receive_webhook(
     #except Exception as exception:
     #    logger.info(exception)
     #finally:
+    return {"ok": True}
+"""
+
+@router.post("/{department_id}/")
+async def process_webhook(
+        department_id: int,
+        request: Request,
+        session: AsyncSession = Depends(get_async_session)
+):
+    payload = await request.json()
+    logger.info(json.dumps(payload))
+    logger.info(department_id)
     return {"ok": True}

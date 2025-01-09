@@ -24,6 +24,11 @@ async def insert_departments_to_db():
             "name": "Полтавская",
             "telegram_group_id": settings.DEPARTMENTS_GROUPS_IDS.get("Полтавская")
         },
+        {
+            "address": 'Нижегородская обл., Нижний Новгород, ул. Юлиуса Фучика, 2А',
+            "name": "Автозавод",
+            "telegram_group_id": settings.DEPARTMENTS_GROUPS_IDS.get("Автозавод")
+        }
     ]
 
     async with get_session() as session:
