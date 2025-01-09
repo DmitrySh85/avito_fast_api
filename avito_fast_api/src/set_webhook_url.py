@@ -32,6 +32,7 @@ async def set_webhook_url():
             logger.info(response.json())
         else:
             logger.info(response.content)
+        await asyncio.sleep(10)
 
 
 async def get_departments() -> List[Department]:
