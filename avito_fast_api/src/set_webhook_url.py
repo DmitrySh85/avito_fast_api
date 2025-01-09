@@ -23,7 +23,7 @@ async def set_webhook_url():
 
         headers = {"Authorization": f"Bearer {access_token}"}
         data = {
-            "url": f"{settings.WEBHOOK_URL}/{department_id}/"
+            "url": f"{settings.WEBHOOK_URL}{department_id}/"
         }
         print(department.id, department.name, access_token, data)
         response = requests.post(url, headers=headers, data=data)
