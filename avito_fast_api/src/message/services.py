@@ -73,9 +73,7 @@ async def send_avito_message_to_tg(
     items_manager = AvitoItemManager(session)
     item = await items_manager.get_item_from_avito(item_id, department_id)
     department = item.get("address")
-    print(department)
     department_group_id = await get_department_group_id(department, session)
-    #department_id = await get_department_id(department, session)
     data.department_id = department_id
     logger.debug(f"Fetched department_group_id from DB: {department_group_id}")
 
