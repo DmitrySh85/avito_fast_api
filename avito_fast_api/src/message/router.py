@@ -40,7 +40,11 @@ async def process_webhook(
         request: Request,
         session: AsyncSession = Depends(get_async_session)
 ):
-    payload = await request.json()
-    logger.info(json.dumps(payload))
-    logger.info(department_id)
+    try:
+        payload = await request.json()
+        logger.info(json.dumps(payload))
+        data = Object(**payload)
+        await process_avito_message(data.payload.value, department_id, session)
+    except ValidationError as e:
+        logger.debug(e)
     return {"ok": True}

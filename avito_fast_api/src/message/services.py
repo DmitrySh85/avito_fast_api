@@ -30,6 +30,7 @@ from settings import settings
 
 async def process_avito_message(
         data: AvitoMessageSchema,
+        department_id: int,
         session: AsyncSession = Depends(get_async_session)
 ):
     message_is_incoming = data.author_id != data.user_id
@@ -40,7 +41,7 @@ async def process_avito_message(
         if message_in_db:
             logger.info("Message is already in db")
             return
-        sent_to_tg_data = await send_avito_message_to_tg(data, session)
+        sent_to_tg_data = await send_avito_message_to_tg(data, department_id, session)
         try:
             await insert_avito_message_to_db(sent_to_tg_data, session)
         except IntegrityError as e:
@@ -61,6 +62,7 @@ async def check_message_in_db(
 
 async def send_avito_message_to_tg(
         data: AvitoMessageSchema,
+        department_id: int,
         session: AsyncSession = Depends(get_async_session)
 ) -> AvitoMessageSchema:
     telegram = TelegramNotificator()
@@ -69,10 +71,11 @@ async def send_avito_message_to_tg(
 
     item_id = data.item_id
     items_manager = AvitoItemManager(session)
-    item = await items_manager.get_item_from_avito(item_id)
+    item = await items_manager.get_item_from_avito(item_id, department_id)
     department = item.get("address")
+    print(department)
     department_group_id = await get_department_group_id(department, session)
-    department_id = await get_department_id(department, session)
+    #department_id = await get_department_id(department, session)
     data.department_id = department_id
     logger.debug(f"Fetched department_group_id from DB: {department_group_id}")
 

@@ -11,7 +11,6 @@ from .models import AccessToken
 from departments.models import Department
 
 
-
 async def get_access_token(department_id: int) -> str | None:
     url = 'https://api.avito.ru/token/'
     department_name = await get_department(department_id)
