@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
     DEPARTMENTS_GROUPS_IDS: dict = json.loads(os.environ.get("DEPARTMENTS_GROUPS_IDS", {}))
+    DEPARTMENTS_CLIENT_SECRETS: list[dict[str, str]] = json.loads(os.environ.get("DEPARTMENTS_CLIENT_SECRETS"))
 
 
 settings = Settings()

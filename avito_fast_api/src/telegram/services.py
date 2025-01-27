@@ -14,14 +14,18 @@ from message.models import AvitoMessage, Chat
 async def send_message_to_avito(
         data: TelegramEventSchema,
         session: AsyncSession = Depends(get_async_session)
-):
+) -> None:
     avito_chat_id = data.chat_id
+
+    department_id = await get_department_id_from_chat(avito_chat_id, session)
     avito_user_id = await get_user_id(avito_chat_id, session)
     logger.info(f"{avito_user_id=}")
     logger.info(f"Received data: {data}")
-    if not avito_chat_id or not avito_user_id:
-        logger.debug("No avito_chat_id, avito_user_id")
-    token = await get_token(session)
+
+    if not avito_chat_id or not avito_user_id or not department_id:
+        logger.debug("No avito_chat_id, avito_user_id, department_id")
+        return
+    token = await get_token(department_id, session)
     if not token:
         return
     avito_message = SendMessageToAvitoSchema(
@@ -54,9 +58,18 @@ def send_api_message_to_avito(
 async def get_user_id(
         avito_chat_id: str,
         session: AsyncSession = Depends(get_async_session)
-) -> int:
+) -> int | None:
     stmt = select(AvitoMessage.user_id
                   ).join(Chat, AvitoMessage.chat_id == Chat.id
                          ).where(Chat.id == avito_chat_id)
+    result = await session.execute(stmt)
+    return result.scalar()
+
+
+async def get_department_id_from_chat(
+        avito_chat_id: str,
+        session
+) -> int | None:
+    stmt = select(Chat.department_id).where(Chat.id == avito_chat_id)
     result = await session.execute(stmt)
     return result.scalar()
