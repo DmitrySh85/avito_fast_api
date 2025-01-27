@@ -14,8 +14,6 @@ from db import get_session
 async def set_webhook_url():
     departments = await get_departments()
     for department in departments:
-        if department.name == "Лианозово":
-            continue
         department_id = department.id
         logger.info(f"Setting webhook: {settings.WEBHOOK_URL}/{department_id}/")
         url = "https://api.avito.ru/messenger/v3/webhook"
