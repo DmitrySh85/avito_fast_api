@@ -24,7 +24,6 @@ class AvitoItemManager:
 
     ):
         items = await self.get_items_from_avito(department_id)
-        print(items)
         matched_items = list(filter(lambda item: item.get("id") == item_id, items))
 
         if matched_items:
