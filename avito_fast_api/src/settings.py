@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     DEPARTMENTS_GROUPS_IDS: dict = json.loads(os.environ.get("DEPARTMENTS_GROUPS_IDS", {}))
     DEPARTMENTS_CLIENT_SECRETS: list[dict[str, str]] = json.loads(os.environ.get("DEPARTMENTS_CLIENT_SECRETS"))
+    CELERY_BROKER: str = os.environ.get("CELERY_BROKER")
 
 
 settings = Settings()

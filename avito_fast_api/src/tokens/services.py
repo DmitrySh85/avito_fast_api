@@ -61,6 +61,15 @@ async def get_token(
         await refresh_token_in_db(token, department_id, session)
     return token
 
+async def get_avito_token(department_id: int) -> str | None:
+    logger.info("Fetching token from db")
+    token = await get_avito_token_from_db(department_id)
+    if not token:
+        logger.info("No token in db or token is expired. Fetching token by API.")
+        token = await get_access_token(department_id)
+        await refresh_avito_token_in_db(token, department_id)
+    return token
+
 
 async def get_token_from_db(
         department_id: int,
@@ -78,6 +87,20 @@ async def get_token_from_db(
         return
 
 
+async def get_avito_token_from_db(department_id: int) -> str | None:
+    current_time = datetime.now()
+    async with get_session() as session:
+        stmt = select(AccessToken.token).where(
+            AccessToken.department_id == department_id,
+            AccessToken.expires_at > current_time
+        )
+        result = await session.execute(stmt)
+        try:
+            return result.fetchone().token
+        except AttributeError:
+            return
+
+
 async def refresh_token_in_db(
         token: str,
         department_id: int,
@@ -93,3 +116,20 @@ async def refresh_token_in_db(
     )
     await session.execute(stmt)
     await session.commit()
+
+
+async def refresh_avito_token_in_db(
+        token: str,
+        department_id: int,
+) -> None:
+    async with get_session() as session:
+        stmt = delete(AccessToken).where(AccessToken.department_id == department_id)
+        await session.execute(stmt)
+        await session.commit()
+
+        expires_at = datetime.now() + timedelta(hours=24)
+        stmt = insert(AccessToken).values(
+            token=token, expires_at=expires_at, department_id=department_id
+        )
+        await session.execute(stmt)
+        await session.commit()
