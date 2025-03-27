@@ -5,11 +5,11 @@ from sqlalchemy import select, func
 
 from tokens.services import get_avito_token
 from .schemas import AvitoReviewResponse, AvitoReview
-from .models import Review
 from db import get_session
 from logger import logger
 from .models import Review
-
+from notificator.telegram import TelegramNotificator
+from departments.services import get_department_tg_group_id
 
 
 class AvitoReviewManager:
@@ -18,6 +18,7 @@ class AvitoReviewManager:
         data = await self.send_review_request(department_id)
         if data.reviews:
             await self.insert_reviews(data.reviews, department_id)
+            await self.send_reviews_to_tg(data.reviews, department_id)
 
     async def send_review_request(self, department_id: int) -> AvitoReviewResponse:
         url = "https://api.avito.ru/ratings/v1/reviews/"
@@ -73,3 +74,26 @@ class AvitoReviewManager:
         async with get_session() as session:
             session.add_all(reviews_to_save)
             await session.commit()
+
+    async def send_reviews_to_tg(
+            self,
+            reviews: list[AvitoReview],
+            department_id: int,
+    ):
+        for review in reviews:
+            await self.send_review_to_tg(review, department_id)
+
+    async def send_review_to_tg(
+            self,
+            review: AvitoReview,
+            department_id: int,
+    ) -> None:
+        notificator = TelegramNotificator()
+        telegram_group_id = await get_department_tg_group_id(department_id)
+        message_text = f"<b>Новый отзыв</b>\n{review.text}"
+        topic = notificator.create_topic(telegram_group_id, review.text)
+        response = notificator.send_message_to_topic(
+            chat_id=telegram_group_id,
+            text=message_text,
+            message_thread_id=topic
+            )

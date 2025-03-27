@@ -24,6 +24,13 @@ async def get_department_group_id(
     return result.scalar()
 
 
+async def get_department_tg_group_id(department_id: int) -> int | None:
+    async with get_session() as session:
+        stmt = select(Department.telegram_group_id).where(Department.id == department_id)
+        result = await session.execute(stmt)
+        return result.scalar()
+
+
 async def get_department_id(
     address: str,
     session: AsyncSession = Depends(get_async_session)
