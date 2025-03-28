@@ -10,6 +10,7 @@ from logger import logger
 from .models import Review
 from notificator.telegram import TelegramNotificator
 from departments.services import get_department_tg_group_id
+from telegram.schemas import TelegramEventSchema
 
 
 class AvitoReviewManager:
@@ -91,9 +92,47 @@ class AvitoReviewManager:
         notificator = TelegramNotificator()
         telegram_group_id = await get_department_tg_group_id(department_id)
         message_text = f"<b>Новый отзыв</b>\n{review.text}"
-        topic = notificator.create_topic(telegram_group_id, review.text)
-        response = notificator.send_message_to_topic(
-            chat_id=telegram_group_id,
-            text=message_text,
-            message_thread_id=topic
-            )
+        topic = notificator.create_topic(telegram_group_id, review.id)
+        message_thread_id = topic.get("result", {}).get('message_thread_id')
+        try:
+            notificator.send_message_to_topic(
+                chat_id=telegram_group_id,
+                text=message_text,
+                message_thread_id=message_thread_id
+                )
+        except Exception as e:
+            logger.debug(e)
+
+    async def send_reply_to_review(self, data: TelegramEventSchema) -> None:
+        review_id = int(data.chat_id)
+        department_id = await self.get_department_id_from_review(review_id)
+        text = data.text
+        await self.send_review_answer_to_avito(review_id, department_id, text)
+
+    async def get_department_id_from_review(self, review_id: int) -> int | None:
+        async with get_session() as session:
+            stmt = select(Review.department).where(Review.id == review_id)
+            result = await session.execute(stmt)
+            return result.scalar()
+
+    async def send_review_answer_to_avito(
+            self,
+            review_id: int,
+            department_id: int,
+            text: str
+    ) -> None:
+        url = "https://api.avito.ru/ratings/v1/answers/"
+        token = await self.get_authorization_token(department_id)
+        headers = {"Authorization": f"Bearer {token}"}
+        payload = {
+            "message": text,
+            "reviewId": review_id
+        }
+        try:
+            response = requests.post(url=url, headers=headers, json=payload)
+            data = response.json()
+            logger.info(data)
+        except Exception as e:
+            logger.debug(e)
+
+
