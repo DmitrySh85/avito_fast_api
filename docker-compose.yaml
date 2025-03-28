@@ -3,15 +3,18 @@ services:
   app:
     build:
       context: .
+      args:
+        - UID=${DOCKER_UID:-1000}
+        - GID=${DOCKER_GID:-1000}
     env_file: .env
-    container_name: avito_fast_api
-    command: sh -c "cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
+    container_name: avito_fast_api_test
+    command: sh -c "alembic upgrade head && cd src && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug"
     ports:
-      - 8800:8000
+      - 8811:8000
 
   db:
     image: postgres:15
-    container_name: db_avito
+    container_name: db_avito_test
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"

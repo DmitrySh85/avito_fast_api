@@ -3,6 +3,9 @@ services:
   app:
     build:
       context: .
+      args:
+        - UID=${DOCKER_UID:-1000}
+        - GID=${DOCKER_GID:-1000}
       dockerfile: Dockerfile.test
     env_file: .env
     container_name: avito_fast_api
