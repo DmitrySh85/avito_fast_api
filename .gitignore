@@ -3,3 +3,7 @@ __pycache__/
 .idea/
 logs/
 .env
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+.pytest_cache/

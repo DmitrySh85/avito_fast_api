@@ -17,8 +17,7 @@ celery_app.autodiscover_tasks(["tasks"])
 celery_app.conf.beat_schedule = {
     'celery_beat_testing': {
         'task': 'tasks.tasks.start_reviews',
-        #"schedule": crontab(hour="*/10")
-        "schedule": crontab(minute="*/1")
+        "schedule": crontab(hour="*/10")
     }
 }
 

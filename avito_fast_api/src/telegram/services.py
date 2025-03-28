@@ -9,6 +9,7 @@ from .schemas import TelegramEventSchema, SendMessageToAvitoSchema
 from logger import logger
 from settings import settings
 from message.models import AvitoMessage, Chat
+from reviews.manager import AvitoReviewManager
 
 
 async def send_message_to_avito(
@@ -16,6 +17,10 @@ async def send_message_to_avito(
         session: AsyncSession = Depends(get_async_session)
 ) -> None:
     avito_chat_id = data.chat_id
+    if not avito_chat_id.startswith("u2i"):
+        review_manager = AvitoReviewManager()
+        await review_manager.send_reply_to_review(data)
+        return
 
     department_id = await get_department_id_from_chat(avito_chat_id, session)
     avito_user_id = await get_user_id(avito_chat_id, session)
