@@ -43,6 +43,7 @@ async def process_webhook(
     try:
         payload = await request.json()
         logger.info(json.dumps(payload))
+        logger.info(f"{department_id=}")
         data = Object(**payload)
         await process_avito_message(data.payload.value, department_id, session)
     except ValidationError as e:
