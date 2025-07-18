@@ -97,8 +97,9 @@ async def send_avito_message_to_tg(
             text=text,
             message_thread_id=message_thread_id
             )
-        logger.info(response.json())
+        logger.info(f"response from tg: {response.json()}")
         content.tg_message_id = get_telegram_message_id(response)
+        logger.info(content.tg_message_id)
 
     if content.call:
         text = RECEIVED_AVITO_CALL.format(

@@ -47,5 +47,5 @@ async def process_webhook(
         data = Object(**payload)
         await process_avito_message(data.payload.value, department_id, session)
     except ValidationError as e:
-        logger.debug(e)
+        logger.debug(f"Catch integrity error: {e}")
     return {"ok": True}
